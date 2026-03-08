@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Research Club</title>
+  <title>Research Valley</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,300&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet" />
@@ -140,6 +140,26 @@
     #hero {
       padding-block: 8rem 6rem;
       border-bottom: 1px solid var(--border);
+    }
+
+    .hero-terminal {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      margin-bottom: 2rem;
+      min-height: 1.2em;
+    }
+
+    .hero-terminal .cursor {
+      animation: blink 1s step-end infinite;
+      color: var(--accent);
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
     }
 
     .hero-tag {
@@ -485,6 +505,7 @@
     <!-- ── Hero ───────────────────────────────────────────────── -->
     <section id="hero">
       <div class="col">
+        <p class="hero-terminal"><span id="terminal-text"></span><span class="cursor">▌</span></p>
         <h1 class="hero-heading">
           Bridging<br />
           <span class="dim">research</span><br />
@@ -654,13 +675,25 @@
         <!-- TODO: Replace with your Luma calendar URL -->
         <a href="https://lu.ma" target="_blank" rel="noopener">Events on Luma</a>
       </p>
-      <p>© <span id="year"></span> Research Club</p>
+      <p>© <span id="year"></span> Research Valley</p>
     </div>
   </footer>
 
   <script>
     // Year
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Typewriter
+    const msg = '> entering Research Valley...';
+    const el  = document.getElementById('terminal-text');
+    let i = 0;
+    function type() {
+      if (i < msg.length) {
+        el.textContent += msg[i++];
+        setTimeout(type, 45 + Math.random() * 30);
+      }
+    }
+    setTimeout(type, 400);
 
     // Smooth scroll
     document.querySelector('a[href="#subscribe"]').addEventListener('click', function(e) {
