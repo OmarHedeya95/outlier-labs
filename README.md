@@ -1,4 +1,4 @@
-# Research Club — Setup
+# Outlier Labs — Setup
 
 Single-file site: `index.html`. No build tools needed — open directly in a browser or drop the folder into any static host.
 
