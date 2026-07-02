@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Research Valley</title>
+  <title>Outlier Labs</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,300&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet" />
@@ -140,6 +140,8 @@
     #hero {
       padding-block: 8rem 6rem;
       border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
     }
 
     .hero-terminal {
@@ -474,6 +476,66 @@
     footer a:hover { color: var(--accent); }
 
     /* ── Responsive ──────────────────────────────────────────── */
+    /* ── 3D ──────────────────────────────────────────────────── */
+
+    /* Perspective grid floor in hero */
+    .hero-grid {
+      position: absolute;
+      bottom: 0;
+      left: -30%;
+      right: -30%;
+      height: 52%;
+      background-image:
+        linear-gradient(rgba(232, 255, 107, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232, 255, 107, 0.045) 1px, transparent 1px);
+      background-size: 50px 50px;
+      transform: perspective(280px) rotateX(74deg);
+      transform-origin: center bottom;
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 75%);
+      mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Hero content floats above the grid */
+    #hero .col {
+      position: relative;
+      z-index: 1;
+      will-change: transform;
+      transition: transform 0.08s linear;
+    }
+
+    /* 3D lift on event rows */
+    .past-event {
+      transition: transform 0.25s ease, background 0.25s ease;
+    }
+
+    .past-event:hover {
+      transform: perspective(800px) rotateX(1.5deg) translateY(-3px);
+      background: rgba(255, 255, 255, 0.018);
+    }
+
+    /* 3D wordmark on hover */
+    .wordmark {
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+
+    .wordmark:hover {
+      transform: perspective(400px) rotateY(-10deg) translateZ(4px);
+    }
+
+    /* Section title depth nudge */
+    .section-title {
+      display: inline-block;
+      transition: transform 0.2s ease, letter-spacing 0.2s ease;
+    }
+
+    .section-header:hover .section-title {
+      transform: perspective(400px) translateZ(8px);
+      letter-spacing: 0.19em;
+    }
+
     @media (max-width: 520px) {
       section { padding-block: 3.5rem; }
       #hero { padding-block: 5rem 3.5rem; }
@@ -486,16 +548,78 @@
       }
       .past-event-link { display: none; }
     }
+
+    /* ── Intro overlay ──────────────────────────────────────── */
+    #intro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: #060608;
+      transition: opacity 1.2s ease-in-out;
+      touch-action: none;
+    }
+
+    #intro-overlay.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #intro-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      will-change: contents;
+    }
+
+    #intro-skip {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.4rem 0.9rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      opacity: 0;
+      animation: skip-appear 0.4s ease 1.2s forwards;
+    }
+
+    #intro-skip:hover {
+      color: rgba(255, 255, 255, 0.85);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    @keyframes skip-appear { to { opacity: 1; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      #intro-overlay { display: none; }
+    }
+
   </style>
 </head>
 <body>
+
+  <!-- ── Intro overlay ─────────────────────────────────── -->
+  <div id="intro-overlay" aria-hidden="true">
+    <canvas id="intro-canvas"></canvas>
+    <button id="intro-skip" type="button">Skip ↓</button>
+  </div>
 
   <!-- neon glow layer -->
   <div id="cursor-glow" aria-hidden="true"></div>
 
   <nav>
     <div class="col">
-      <a href="#" class="wordmark">Research<span>&nbsp;Valley</span></a>
+      <a href="#" class="wordmark">Outlier<span>&nbsp;Labs</span></a>
       <a href="#subscribe" class="nav-link">Subscribe</a>
     </div>
   </nav>
@@ -504,17 +628,18 @@
 
     <!-- ── Hero ───────────────────────────────────────────────── -->
     <section id="hero">
+      <div class="hero-grid" aria-hidden="true"></div>
       <div class="col">
         <p class="hero-terminal"><span id="terminal-text"></span><span class="cursor">▌</span></p>
         <h1 class="hero-heading">
-          Bridging<br />
-          <span class="dim">research</span><br />
-          <span class="hi">and start-ups.</span>
+          The non-obvious<br />
+          <span class="hi">bet.</span>
         </h1>
         <p class="hero-sub">
-          Our first edition is Papers: intimate conversations with AI researchers
-          about their work. Hear directly from the authors in small group
-          discussions you won't find anywhere else.
+          A builder salon for top technical talent exploring non-obvious
+          directions in AI, robotics, and the physical world. We surface
+          the most promising contrarian ideas and bring them to the people
+          who can build on them.
         </p>
         <p class="hero-edition">Edition 01 · 2026</p>
       </div>
@@ -528,32 +653,27 @@
           <span class="section-index">01</span>
         </div>
         <div class="manifesto-body">
-          <p>Ideas shape the world.</p>
+          <p>The biggest challenge of our generation is unlocking human intelligence to create abundance for all.</p>
           <p>
-            Every technology, every company, every system we use today began as a
-            thought, often written first as research. A paper, a theory, a new way
-            of seeing a problem.
+            Across AI, robotics, and the physical world, the most important
+            breakthroughs rarely come from the consensus direction. Capital
+            concentrates. Talent follows dogma. The field converges too fast.
+          </p>
+          <p><strong>We think the most important ideas are the ones nobody is building yet.</strong></p>
+          <p>
+            Outlier Labs is a builder salon. We bring together top 1% technical builders
+            to explore contrarian directions — ideas beyond the current paradigm
+            that deserve serious attention.
           </p>
           <p>
-            We are living in an age where research moves the frontier faster than ever.
-            Ideas leave the lab and quickly become products, companies, and entire
-            industries.
-          </p>
-          <p><strong>The boundary between research and the real world is dissolving.</strong></p>
-          <p>
-            Researchers build companies. Builders read papers. Discovery and creation
-            are becoming the same process.
+            Each edition, we put one unorthodox research direction in the room with the
+            people who could make it real. Small groups. Deep conversations. No noise.
           </p>
           <p>
-            But progress still depends on people taking ideas seriously: thinking about
-            them deeply, questioning them, and building on top of them together.
+            The future won't come from following the consensus.
           </p>
           <p>
-            Because the future is not shaped by ideas alone.
-          </p>
-          <p>
-            It is shaped by the people who understand them well enough to turn them
-            into reality.
+            It will come from the outliers who were right too early.
           </p>
         </div>
       </div>
@@ -612,17 +732,16 @@
         </div>
         <div class="subscribe-wrap">
           <p class="subscribe-copy">
-            We announce new sessions, paper picks, and the occasional reading
-            note via our Substack. One email per session, no noise.
+            Follow us on Luma to get notified when new editions are announced
+            and to register for upcoming sessions.
           </p>
-          <!-- TODO: Replace href with your actual Substack subscribe URL -->
           <a
-            href="https://substack.com"
+            href="https://luma.com/outlierlabs"
             class="subscribe-btn"
             target="_blank"
             rel="noopener"
           >
-            Subscribe ↗
+            Follow on Luma ↗
           </a>
         </div>
       </div>
@@ -634,18 +753,127 @@
   <footer>
     <div class="col">
       <p>
-        <a href="https://luma.com/researchvalley" target="_blank" rel="noopener">Events on Luma</a>
+        <a href="https://luma.com/outlierlabs" target="_blank" rel="noopener">Events on Luma</a>
       </p>
-      <p>© <span id="year"></span> Research Valley</p>
+      <p>© <span id="year"></span> Outlier Labs</p>
     </div>
   </footer>
 
   <script>
+    // ── Intro: black hole ────────────────────────────────────────────────────
+    (function () {
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        var o = document.getElementById('intro-overlay');
+        if (o) o.style.display = 'none';
+        return;
+      }
+
+      function easOutC(t) { return 1 - Math.pow(1 - t, 3); }
+      function easInC(t)  { return t * t * t; }
+
+      // Phase timing (ms)
+      var PH = [
+        {s:0,    e:1000},  // 0: fade in
+        {s:1000, e:2000},  // 1: hold + gentle pulse
+        {s:2000, e:2800},  // 2: fade to page
+      ];
+
+      function getPhase(el) {
+        for (var i = PH.length - 1; i >= 0; i--) {
+          if (el >= PH[i].s)
+            return {id: i, t: Math.min((el - PH[i].s) / (PH[i].e - PH[i].s), 1)};
+        }
+        return {id: 0, t: 0};
+      }
+
+      // ── Draw: black hole ───────────────────────────────────────────────────
+      function drawScene(ctx, W, H, fade, elapsed) {
+        if (fade <= 0) return;
+        var cx = W/2, cy = H/2;
+        var r = Math.min(W, H) * 0.15;
+        var pulse = 1 + 0.06 * Math.sin(elapsed * 0.0008);
+
+        // Wide outer ambient glow
+        var g1 = ctx.createRadialGradient(cx, cy, r, cx, cy, r * 6 * pulse);
+        g1.addColorStop(0,   'rgba(255,248,220,' + (0.08 * fade) + ')');
+        g1.addColorStop(0.2, 'rgba(240,235,200,' + (0.04 * fade) + ')');
+        g1.addColorStop(0.6, 'rgba(200,190,160,' + (0.015 * fade) + ')');
+        g1.addColorStop(1,   'rgba(0,0,0,0)');
+        ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
+
+        // Bright ring at event horizon
+        var g2 = ctx.createRadialGradient(cx, cy, r * 0.82, cx, cy, r * 2.2 * pulse);
+        g2.addColorStop(0,    'rgba(255,252,235,' + (0.32 * fade) + ')');
+        g2.addColorStop(0.18, 'rgba(255,248,220,' + (0.18 * fade) + ')');
+        g2.addColorStop(0.45, 'rgba(232,220,180,' + (0.06 * fade) + ')');
+        g2.addColorStop(1,    'rgba(0,0,0,0)');
+        ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
+
+        // Black hole sphere
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+        ctx.fillStyle = '#060608'; ctx.fill();
+      }
+
+      // ── RAF loop ────────────────────────────────────────────────────────────
+      var running = false, iStart = 0, iRaf = null, iCvs = null, iCtx = null;
+
+      function frame(now) {
+        if (!running) return;
+        var el = now - iStart;
+        if (el >= PH[PH.length - 1].e + 200) { finish(); return; }
+
+        var ph = getPhase(el), W = iCvs.width, H = iCvs.height;
+
+        iCtx.fillStyle = '#060608'; iCtx.fillRect(0, 0, W, H);
+
+        switch (ph.id) {
+          case 0: drawScene(iCtx, W, H, easOutC(ph.t), el); break;
+          case 1: drawScene(iCtx, W, H, 1.0, el); break;
+          case 2: drawScene(iCtx, W, H, 1 - easInC(ph.t), el); break;
+        }
+
+        iRaf = requestAnimationFrame(frame);
+      }
+
+      function finish() {
+        if (!running) return;
+        running = false; cancelAnimationFrame(iRaf);
+        var ov = document.getElementById('intro-overlay');
+        ov.classList.add('fade-out');
+        ov.addEventListener('transitionend', function fn() {
+          ov.removeEventListener('transitionend', fn);
+          ov.style.display = 'none';
+          if (iCvs) { iCvs.width = 1; iCvs.height = 1; }
+          iCvs = null; iCtx = null;
+          window._startTypewriter();
+        }, {once: true});
+      }
+
+      function init() {
+        iCvs = document.getElementById('intro-canvas');
+        iCtx = iCvs.getContext('2d');
+        function resize() {
+          iCvs.width = window.innerWidth; iCvs.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+        document.getElementById('intro-skip').addEventListener('click', finish);
+        iStart = performance.now();
+        running = true; iRaf = requestAnimationFrame(frame);
+      }
+
+      document.readyState === 'loading'
+        ? document.addEventListener('DOMContentLoaded', init)
+        : init();
+    })();
+    // ── End black hole intro ─────────────────────────────────────────────────
+
     // Year
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // Typewriter
-    const msg = '> entering Research Valley...';
+    const msg = '> exploring unorthodox ideas...';
     const el  = document.getElementById('terminal-text');
     let i = 0;
     function type() {
@@ -654,13 +882,44 @@
         setTimeout(type, 45 + Math.random() * 30);
       }
     }
-    setTimeout(type, 400);
+    // Fire typewriter after intro completes (or immediately if reduced motion)
+    window._startTypewriter = function() { setTimeout(type, 400); };
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      window._startTypewriter();
+    }
 
     // Smooth scroll
     document.querySelector('a[href="#subscribe"]').addEventListener('click', function(e) {
       const t = document.getElementById('subscribe');
       if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
     });
+
+    // 3D hero tilt tracking mouse
+    const heroCol  = document.querySelector('#hero .col');
+    const heroSect = document.getElementById('hero');
+    let tRX = 0, tRY = 0, cRX = 0, cRY = 0, tiltRaf = null;
+
+    heroSect.addEventListener('mousemove', function(e) {
+      const r = heroSect.getBoundingClientRect();
+      tRY =  ((e.clientX - r.left)  / r.width  - 0.5) * 7;
+      tRX = -((e.clientY - r.top)   / r.height - 0.5) * 4;
+      if (!tiltRaf) tiltRaf = requestAnimationFrame(tiltTick);
+    });
+
+    heroSect.addEventListener('mouseleave', function() {
+      tRX = 0; tRY = 0;
+      if (!tiltRaf) tiltRaf = requestAnimationFrame(tiltTick);
+    });
+
+    function tiltTick() {
+      cRX += (tRX - cRX) * 0.1;
+      cRY += (tRY - cRY) * 0.1;
+      heroCol.style.transform =
+        `perspective(1000px) rotateY(${cRY.toFixed(2)}deg) rotateX(${cRX.toFixed(2)}deg)`;
+      tiltRaf = (Math.abs(tRX - cRX) > 0.05 || Math.abs(tRY - cRY) > 0.05)
+        ? requestAnimationFrame(tiltTick)
+        : null;
+    }
 
     // Neon cursor glow — update CSS vars on mouse move
     const glow = document.getElementById('cursor-glow');
