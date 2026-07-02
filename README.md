@@ -4,17 +4,7 @@ Single-file site: `index.html`. No build tools needed — open directly in a bro
 
 ---
 
-## 1. Add your Substack URL
-
-In `index.html`, find the comment `TODO: Replace href with your actual Substack subscribe URL` and update the `href`:
-
-```html
-<a href="https://YOUR-PUBLICATION.substack.com/subscribe" ...>
-```
-
----
-
-## 2. Add the Luma calendar embed
+## 1. Add the Luma calendar embed
 
 1. Go to [lu.ma](https://lu.ma) and create a calendar for your events.
 2. In your calendar settings, find the **Embed** option and copy the calendar ID (looks like `cal-XXXXXXXXXX`).
@@ -39,13 +29,13 @@ In `index.html`, find the comment `TODO: Replace href with your actual Substack 
 
 ---
 
-## 3. Update the manifesto
+## 2. Update the manifesto
 
 In `index.html`, find the comment `TODO: Replace placeholder text below with your own copy` and rewrite the five paragraphs inside `.manifesto-body` with your own words.
 
 ---
 
-## 4. Deploy
+## 3. Deploy
 
 **GitHub Pages** — push to a repo, go to Settings → Pages, set source to `main` / `root`. Done.
 
