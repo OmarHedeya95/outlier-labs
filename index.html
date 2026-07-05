@@ -773,7 +773,7 @@
   <nav>
     <div class="col">
       <a href="#" class="wordmark">Outlier<span>&nbsp;Labs</span></a>
-      <a href="#subscribe" class="nav-link">Subscribe</a>
+      <button class="nav-link" id="nav-subscribe">Subscribe</button>
     </div>
   </nav>
 
@@ -1035,12 +1035,6 @@
       window._startTypewriter();
     }
 
-    // Smooth scroll
-    document.querySelector('a[href="#subscribe"]').addEventListener('click', function(e) {
-      const t = document.getElementById('subscribe');
-      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
-    });
-
     // Subscribe modal
     const modal     = document.getElementById('subscribe-modal');
     const openBtn   = document.getElementById('subscribe-open');
@@ -1053,6 +1047,7 @@
     function closeModal() { modal.classList.remove('open'); document.body.style.overflow = ''; }
 
     openBtn.addEventListener('click', openModal);
+    document.getElementById('nav-subscribe').addEventListener('click', openModal);
     closeBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', function(e) { if (e.target === modal) closeModal(); });
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
