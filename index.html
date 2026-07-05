@@ -604,9 +604,162 @@
       #intro-overlay { display: none; }
     }
 
+    /* ── Subscribe modal ────────────────────────────────────── */
+    #subscribe-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(6, 6, 8, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    #subscribe-modal.open { display: flex; }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+    }
+
+    .modal-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+    }
+
+    .modal-sub {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .modal-field label {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .modal-field input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--ink);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
+      padding: 0.65rem 0.9rem;
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+
+    .modal-field input::placeholder { color: var(--ink-dim); }
+
+    .modal-field input:focus { border-color: var(--accent); }
+
+    .modal-submit {
+      width: 100%;
+      margin-top: 0.5rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      padding: 0.7rem 1.5rem;
+      cursor: pointer;
+      box-shadow:
+        0 0 12px rgba(232, 255, 107, 0.5),
+        0 0 28px rgba(232, 255, 107, 0.25);
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+
+    .modal-submit:hover {
+      box-shadow:
+        0 0 18px rgba(232, 255, 107, 0.75),
+        0 0 45px rgba(232, 255, 107, 0.4);
+      transform: scale(1.02);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: var(--ink-dim);
+      font-size: 1rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.25rem;
+      transition: color 0.15s;
+    }
+
+    .modal-close:hover { color: var(--ink); }
+
+    .modal-success {
+      display: none;
+      text-align: center;
+      padding: 1rem 0;
+    }
+
+    .modal-success p {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.88rem;
+      color: var(--ink-muted);
+      line-height: 1.7;
+    }
+
+    .modal-success .accent { color: var(--accent); font-weight: 600; }
+
   </style>
 </head>
 <body>
+
+  <!-- ── Subscribe modal ──────────────────────────────── -->
+  <div id="subscribe-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <div id="modal-form-wrap">
+        <p class="modal-title" id="modal-title">Stay in the loop</p>
+        <p class="modal-sub">Get notified when new editions are announced.</p>
+        <form id="subscribe-form" novalidate>
+          <div class="modal-field">
+            <label for="sub-name">Name</label>
+            <input id="sub-name" name="name" type="text" placeholder="Your name" required />
+          </div>
+          <div class="modal-field">
+            <label for="sub-email">Email</label>
+            <input id="sub-email" name="email" type="email" placeholder="you@example.com" required />
+          </div>
+          <button type="submit" class="modal-submit">Subscribe ↗</button>
+        </form>
+      </div>
+      <div class="modal-success" id="modal-success">
+        <p><span class="accent">You're in.</span><br />We'll be in touch when the next edition drops.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- ── Intro overlay ─────────────────────────────────── -->
   <div id="intro-overlay" aria-hidden="true">
@@ -732,17 +885,11 @@
         </div>
         <div class="subscribe-wrap">
           <p class="subscribe-copy">
-            Follow us on Luma to get notified when new editions are announced
-            and to register for upcoming sessions.
+            Get notified when new editions are announced and register for upcoming sessions.
           </p>
-          <a
-            href="https://luma.com/outlierlabs"
-            class="subscribe-btn"
-            target="_blank"
-            rel="noopener"
-          >
-            Follow on Luma ↗
-          </a>
+          <button class="subscribe-btn" id="subscribe-open">
+            Subscribe ↗
+          </button>
         </div>
       </div>
     </section>
@@ -892,6 +1039,40 @@
     document.querySelector('a[href="#subscribe"]').addEventListener('click', function(e) {
       const t = document.getElementById('subscribe');
       if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    });
+
+    // Subscribe modal
+    const modal     = document.getElementById('subscribe-modal');
+    const openBtn   = document.getElementById('subscribe-open');
+    const closeBtn  = document.getElementById('modal-close');
+    const form      = document.getElementById('subscribe-form');
+    const formWrap  = document.getElementById('modal-form-wrap');
+    const success   = document.getElementById('modal-success');
+
+    function openModal()  { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeModal() { modal.classList.remove('open'); document.body.style.overflow = ''; }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const name  = document.getElementById('sub-name').value.trim();
+      const email = document.getElementById('sub-email').value.trim();
+      if (!name || !email) return;
+
+      // TODO: replace with your backend endpoint
+      // await fetch('/api/subscribe', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ name, email }),
+      // });
+
+      formWrap.style.display = 'none';
+      success.style.display = 'block';
+      setTimeout(closeModal, 2800);
     });
 
     // 3D hero tilt tracking mouse
