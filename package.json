@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DoraThee/outlier_labs.git"
+    "url": "git+https://github.com/OmarHedeya95/outlier-labs.git"
   },
   "dependencies": {
     "convex": "^1.42.1",
