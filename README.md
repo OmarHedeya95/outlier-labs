@@ -1,64 +1,49 @@
 # Outlier Labs
 
-Static marketing site (`index.html`) with a [Convex](https://convex.dev) backend for newsletter subscriptions.
+React + Vite frontend with a [Convex](https://convex.dev) backend for newsletter subscriptions.
 
 ## Convex project
 
 **Project:** [OutlierLabs](https://dashboard.convex.dev/t/omar-y-hedeya/outlierlabs) (`omar-y-hedeya:outlierlabs`)
 
-Already linked to your Convex account. Run `npm run dev` to push function changes to the cloud dev deployment.
-
-```bash
-cp config.example.js config.js   # then set convexSiteUrl from CONVEX_SITE_URL in .env.local
-```
-
 ## Quick start
 
 ```bash
 npm install
-npm run dev          # starts Convex dev deployment (keep running)
+cp .env.example .env.local   # then fill in URLs from dashboard or `npm run dev` output
+npm run dev                  # Convex backend + Vite at http://localhost:5173
 ```
 
-On first run, log in and create/link a Convex project when prompted.
-
-Then configure the frontend:
+Add `VITE_CONVEX_URL` to `.env.local` (same value as `CONVEX_URL`):
 
 ```bash
-cp config.example.js config.js
+VITE_CONVEX_URL=https://your-deployment.convex.cloud
 ```
-
-Edit `config.js` and set `convexSiteUrl` to your deployment's site URL (shown in the `convex dev` output), e.g. `https://happy-animal-123.convex.site`.
-
-Open `index.html` in a browser (or use any static file server). The subscribe form POSTs to `{convexSiteUrl}/subscribe`.
 
 ## Project structure
 
 ```
-index.html          # Static site (no build step)
-config.example.js   # Frontend config template → copy to config.js
+index.html              # Vite entry
+src/
+  main.tsx              # ConvexProvider + React root
+  App.tsx               # Page layout
+  index.css             # Site styles
+  components/           # UI sections + subscribe modal
+  hooks/                # Intro animation, typewriter, tilt, cursor glow
 convex/
-  schema.ts         # subscribers table
-  subscribers.ts    # subscribe mutation
-  http.ts           # POST /subscribe HTTP route (CORS-enabled)
+  schema.ts             # subscribers table
+  subscribers.ts        # subscribe mutation
 ```
-
-## Convex backend
-
-| Endpoint | Method | Body | Description |
-|----------|--------|------|-------------|
-| `/subscribe` | POST | `{ name, email }` | Add a newsletter subscriber (dedupes by email) |
-
-Subscribers are stored in the `subscribers` table with `name`, `email`, and `createdAt`.
-
-View data in the [Convex dashboard](https://dashboard.convex.dev).
 
 ## Scripts
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Develop against Convex (`npx convex dev`) |
-| `npm run deploy` | Deploy backend to production |
-| `npm run typecheck` | Type-check Convex functions |
+| `npm run dev` | Convex dev + Vite frontend |
+| `npm run build` | Production frontend build |
+| `npm run preview` | Preview production build |
+| `npm run deploy` | Deploy Convex backend to production |
+| `npm run typecheck` | Type-check frontend + Convex |
 
 ## TODO
 
@@ -66,10 +51,6 @@ View data in the [Convex dashboard](https://dashboard.convex.dev).
 
 ## Deploy
 
-**Frontend** — any static host (GitHub Pages, Netlify, Vercel). Include `config.js` with your production `convexSiteUrl`.
+**Frontend** — build with `npm run build`, deploy `dist/` to Vercel/Netlify. Set `VITE_CONVEX_URL` to your production Convex URL.
 
 **Backend** — `npm run deploy` (production Convex deployment only).
-
-## Environment
-
-Copy `.env.example` to `.env.local` for Convex CLI tooling. The static site uses `config.js`, not `.env` files.

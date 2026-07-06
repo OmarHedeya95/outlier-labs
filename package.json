@@ -1,10 +1,12 @@
 {
   "name": "outlierlabs",
   "version": "1.0.0",
-  "description": "Single-file site: `index.html`. No build tools needed — open directly in a browser or deploy to any static host.",
-  "main": "index.js",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "convex dev",
+    "dev": "convex dev --start 'vite'",
+    "build": "vite build",
+    "preview": "vite preview",
     "deploy": "convex deploy",
     "typecheck": "tsc --noEmit"
   },
@@ -12,17 +14,16 @@
     "type": "git",
     "url": "git+https://github.com/DoraThee/outlier_labs.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/DoraThee/outlier_labs/issues"
-  },
-  "homepage": "https://github.com/DoraThee/outlier_labs#readme",
   "dependencies": {
-    "convex": "^1.42.1"
+    "convex": "^1.42.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.2.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.3"
   }
 }
