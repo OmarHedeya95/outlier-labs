@@ -258,6 +258,12 @@
     #events        { border-bottom: 1px solid var(--border); }
     #past-events   { border-bottom: 1px solid var(--border); }
 
+    .past-events {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
     /* upcoming placeholder */
     .events-placeholder {
       border: 1px solid var(--border);

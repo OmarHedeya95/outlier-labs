@@ -7,7 +7,7 @@ export function Events() {
           <span className="section-index">02</span>
         </div>
         <iframe
-          src="https://luma.com/embed/event/8s7bis68/simple"
+          src="https://luma.com/embed/calendar/cal-I7hIeu5c7EHZhDp/events"
           width="100%"
           height="450"
           frameBorder={0}
@@ -15,7 +15,7 @@ export function Events() {
           allowFullScreen
           aria-hidden={false}
           tabIndex={0}
-          title="No Backprop — Outlier Labs"
+          title="Upcoming sessions"
         />
       </div>
     </section>
