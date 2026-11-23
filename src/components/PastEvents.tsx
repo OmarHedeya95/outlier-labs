@@ -1,4 +1,4 @@
-const pastEventSlugs = ["8s7bis68", "4acss683"];
+const pastEventSlugs = ["8s7bis68", "4acss683", "2khmpnqp"];
 
 export function PastEvents() {
   return (
